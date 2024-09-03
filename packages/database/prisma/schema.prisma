@@ -15,5 +15,66 @@ datasource db {
 
 
 model User {
-    id Int @id 
+  id       Int    @id @default(autoincrement())
+  name     String
+  email    String
+  password String
+  crafts   Craft[]
+}
+
+model Craft {
+  id           String  @id @default(uuid())
+  triggerId    String
+  userId       Int
+  trigger      Trigger?
+  actions      Action[]
+  craftRuns    CraftRun[]
+  user         User @relation(fields: [userId], references: [id])
+}
+
+model Trigger {
+  id          String  @id @default(uuid())
+  craftId     String  @unique
+  triggerId   String
+  metadata    Json  @default("{}")
+  type        AvailableTrigger @relation(fields: [triggerId], references: [id])
+  craft       Craft            @relation(fields: [craftId], references: [id])
+}
+
+model Action {
+  id          String  @id @default(uuid())
+  craftId     String  
+  craft       Craft   @relation(fields: [craftId], references: [id])
+  actionId    String
+  metadata    Json  @default("{}")
+  type        AvailableAction @relation(fields: [actionId], references: [id])
+  sortingOrder Int    @default(0)
+}
+
+model AvailableAction {
+  id       String @id @default(uuid())
+  name     String
+  image    String
+  actions  Action[]
+}
+
+model AvailableTrigger {
+  id       String @id @default(uuid())
+  name     String 
+  image    String
+  triggers Trigger[]
+}
+
+model CraftRun {
+  id           String @id @default(uuid())
+  craftId      String
+  metadata     Json
+  craft        Craft @relation(fields: [craftId], references: [id])
+  craftRunOutbox CraftRunOutbox?
+}
+
+model CraftRunOutbox {
+  id           String @id @default(uuid())
+  craftRunId   String @unique
+  craftRun     CraftRun @relation(fields: [craftRunId], references: [id])
 }
