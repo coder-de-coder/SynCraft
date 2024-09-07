@@ -9,7 +9,7 @@ export const SignupSchema = z.object({
 })
 
 
-export const SigniSchema = z.object({
+export const SigninSchema = z.object({
     username : z.string(),
     password : z.string()
 })

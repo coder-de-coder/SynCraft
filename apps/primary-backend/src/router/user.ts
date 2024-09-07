@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { SignupSchema } from "@repo/schemas";
+import { SigninSchema, SignupSchema } from "@repo/schemas";
 import { PrismaClient } from "@repo/db";
 import jwt from "jsonwebtoken";
 import { JWT_PASSWORD } from "../config";
@@ -46,13 +46,13 @@ router.post("/signup", async (req, res) => {
   });
 
   return res.status(201).json({
-    message : "User Created Successfully"
-  })
+    message: "User Created Successfully",
+  });
 });
 
 router.post("/signin", async (req, res) => {
   const body = req.body;
-  const parsedData = SignupSchema.safeParse(body);
+  const parsedData = SigninSchema.safeParse(body);
 
   if (!parsedData.success) {
     return res.status(403).json({
@@ -60,28 +60,33 @@ router.post("/signin", async (req, res) => {
     });
   }
 
-  try {
-    const user = await client.user.findFirst({
-      where: {
-        email: parsedData.data.username,
-        password: parsedData.data.password,
-      },
-    });
+  const user = await client.user.findFirst({
+    where: {
+      email: parsedData.data.username,
+      password: parsedData.data.password,
+    },
+  });
 
-    const token = jwt.sign(
-      {
-        id: user?.id,
-      },
-      JWT_PASSWORD
-    );
-  } catch (error) {
+  if (!user) {
     return res.status(403).json({
       message: "Incorrect Username or Password Reciecved",
     });
   }
+
+  const token = jwt.sign(
+    {
+      id: user?.id,
+    },
+    JWT_PASSWORD
+  );
+
+  return res.status(201).json({
+    token,
+  });
+
 });
 
-router.get("/user", authMiddleware, async (req, res) => {
+router.get("/", authMiddleware, async (req, res) => {
   //TODO: Fix type errror from middleware logic
   // @ts-ignore
   const id = req.id;
