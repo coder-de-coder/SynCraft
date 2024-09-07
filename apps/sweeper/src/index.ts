@@ -9,8 +9,11 @@ const kafka = new Kafka({
 });
 
 async function main() {
+
+  console.log('Sweeper Started')
+
   const producer = kafka.producer();
-  await producer.connect();
+   await producer.connect();
 
   while (true) {
     const pendingRows = await client.craftRunOutbox.findMany({
