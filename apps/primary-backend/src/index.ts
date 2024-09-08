@@ -7,7 +7,7 @@ app.use(express.json());
 
 
 app.use('/api/v1/user', userRouter);
-app.use('/api/v1/zap', craftRouter);
+app.use('/api/v1/craft', craftRouter);
 
 
 app.listen(3000, () => {
