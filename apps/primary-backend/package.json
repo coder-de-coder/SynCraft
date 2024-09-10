@@ -14,7 +14,9 @@
     "@repo/db": "*",
     "@repo/middleware": "*",
     "@repo/schemas": "*",
+    "@types/cors": "^2.8.17",
     "@types/jsonwebtoken": "^9.0.6",
+    "cors": "^2.8.5",
     "jsonwebtoken": "^9.0.2"
   }
 }
